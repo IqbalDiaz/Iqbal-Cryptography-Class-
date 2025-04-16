@@ -77,14 +77,30 @@ gobuster dir -u http://<TARGET_IP> -w /usr/share/wordlists/dirb/common.txt
 
 ## 🔓 6. Brute Force Passwords (Guess Passwords)
 
+Got it — you want the note to be super simple and clear. Here's a more casual, easy-to-understand version of the note:
+
+---
+
 ### ✏️ Prepare files first:
 ```bash
 echo -e "admin\nmsfadmin\nuser" > userlist.txt
 echo -e "1234\nmsfadmin\npassword" > passlist.txt
 ```
 Now we have:
-- List of usernames in `userlist.txt`
-- List of passwords in `passlist.txt`
+- A list of usernames in `userlist.txt`
+- A list of passwords in `passlist.txt`
+
+---
+
+### 📂 Or use Kali's default wordlist:
+```bash
+/usr/share/wordlists/rockyou.txt
+```
+
+> 📝 **Note:**  
+> `rockyou.txt` is a big list of real passwords. It’s already on Kali.  
+> Use it when you want to try **lots of possible passwords**.  
+> But it’s slow — so for testing or practice, it’s better to use your **own small list** (like above).
 
 ---
 
