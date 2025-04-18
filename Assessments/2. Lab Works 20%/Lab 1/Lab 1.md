@@ -232,7 +232,7 @@ Use **Wireshark** to capture what’s being sent when you login.
 ---
 
 ## ✅ 11. Conclusion  
-- You can guess passwords using tools like Hydra and NetExec  
+- You can guess passwords using tools like Hydra and Medusa 
 - Some services (FTP, Telnet) send data in plain text (unsafe)  
 - Others (SSH) are encrypted (safe)  
 - The best way to stay safe is to:
