@@ -132,13 +132,13 @@ Same idea — guess username & password for Telnet.
 
 ---
 
-### 6.3 🔒 SSH Brute Force (with NetExec)
+### 6.3 🔒 SSH Brute Force 
 ```bash
-nxc ssh <TARGET_IP> -u userlist.txt -p passlist.txt
+medusa -h <TARGET_IP> -U userlist.txt -P passlist.txt -M ssh
 ```
 Check if any usernames & passwords work for SSH.
 
-![alt text](image-18.png)
+![alt text](image-1.png)
 
 ---
 
