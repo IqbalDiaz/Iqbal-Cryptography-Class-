@@ -84,8 +84,6 @@ gobuster dir -u http://<TARGET_IP> -w /usr/share/wordlists/dirb/common.txt
 
 ## 🔓 6. Brute Force Passwords (Guess Passwords)
 
-Got it — you want the note to be super simple and clear. Here's a more casual, easy-to-understand version of the note:
-
 ---
 
 ### ✏️ Prepare files first:
