@@ -42,7 +42,7 @@ nmap -sC -sV -p 21,22,23,80 <TARGET_IP>
 23/tcp open  telnet
 80/tcp open  http
 ```
-![alt text](image.png)
+![alt text](img/image.png)
 
 ---
 
@@ -62,8 +62,8 @@ postgres
 ```
 **Remember these — we’ll need them to guess passwords!**
 
-![alt text](image-8.png)
-![alt text](image-9.png)
+![alt text](img/image-8.png)
+![alt text](img/image-9.png)
 ---
 
 ## 🌐 5. Check for Hidden Web Pages (Gobuster)
@@ -78,7 +78,7 @@ gobuster dir -u http://<TARGET_IP> -w /usr/share/wordlists/dirb/common.txt
 
 ✅ *Look for good stuff like `/login`*
 
-![alt text](image-15.png)
+![alt text](img/image-15.png)
 
 ---
 
@@ -120,7 +120,7 @@ hydra -L userlist.txt -P passlist.txt <TARGET_IP> ftp -V
 [21][ftp] host: 192.168.1.100  login: msfadmin  password: msfadmin
 ```
 
-![alt text](image-16.png)
+![alt text](img/image-16.png)
 
 ---
 
@@ -130,7 +130,7 @@ hydra -L userlist.txt -P passlist.txt <TARGET_IP> telnet -V
 ```
 Same idea — guess username & password for Telnet.
 
-![alt text](image-17.png)
+![alt text](img/image-17.png)
 
 ---
 
@@ -140,7 +140,7 @@ medusa -h <TARGET_IP> -U userlist.txt -P passlist.txt -M ssh
 ```
 Check if any usernames & passwords work for SSH.
 
-![alt text](image-1.png)
+![alt text](img/image-1.png)
 
 ---
 
@@ -157,7 +157,7 @@ Check if any usernames & passwords work for SSH.
 9. Start Attack  
 10. Look for different responses = password found!
 
-![alt text](image-19.png)![alt text](image-20.png)![alt text](image-21.png)![alt text](image-22.png)![alt text](image-23.png)![alt text](image-34.png)![alt text](image-35.png)
+![alt text](img/image-19.png)![alt text](img/image-20.png)![alt text](img/image-21.png)![alt text](img/image-22.png)![alt text](img/image-23.png)![alt text](img/image-34.png)![alt text](img/image-35.png)
 
 ---
 
@@ -172,22 +172,22 @@ Use **Wireshark** to capture what’s being sent when you login.
 
 ### Try logging in to:
 - **FTP** → `ftp <TARGET_IP>` 
-![alt text](image-25.png)
+![alt text](img/image-25.png)
 - **Telnet** → `telnet <TARGET_IP>` 
-![alt text](image-29.png)
+![alt text](img/image-29.png)
 - **SSH** → `ssh <username>@<TARGET_IP>`  
-![alt text](image-36.png)
+![alt text](img/image-36.png)
 
 **Wireshark Filter**:
 - `tcp.port == 21` (for FTP)
-![alt text](image-26.png)
-![alt text](image-27.png) 
+![alt text](img/image-26.png)
+![alt text](img/image-27.png) 
 - `tcp.port == 23` (for Telnet)
-![alt text](image-30.png)
-![alt text](image-32.png) 
+![alt text](img/image-30.png)
+![alt text](img/image-32.png) 
 - `tcp.port == 22` (for SSH)
-![alt text](image-36.png)
-![alt text](image-37.png)
+![alt text](img/image-36.png)
+![alt text](img/image-37.png)
 
 ✅ *See if username and password appear in clear text (FTP and Telnet usually do). SSH is encrypted (cannot read).*
 
