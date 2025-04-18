@@ -40,6 +40,7 @@ nmap -sC -sV -p 21,22,23,80 <TARGET_IP>
 23/tcp open  telnet
 80/tcp open  http
 ```
+![alt text](image.png)
 
 ---
 
@@ -59,6 +60,8 @@ postgres
 ```
 **Remember these — we’ll need them to guess passwords!**
 
+![alt text](image-8.png)
+![alt text](image-9.png)
 ---
 
 ## 🌐 5. Check for Hidden Web Pages (Gobuster)
@@ -72,6 +75,8 @@ gobuster dir -u http://<TARGET_IP> -w /usr/share/wordlists/dirb/common.txt
 - Finds secret pages
 
 ✅ *Look for good stuff like `/login`*
+
+![alt text](image-15.png)
 
 ---
 
@@ -113,6 +118,8 @@ hydra -L userlist.txt -P passlist.txt <TARGET_IP> ftp -V
 [21][ftp] host: 192.168.1.100  login: msfadmin  password: msfadmin
 ```
 
+![alt text](image-16.png)
+
 ---
 
 ### 6.2 📞 TELNET Brute Force
@@ -121,6 +128,8 @@ hydra -L userlist.txt -P passlist.txt <TARGET_IP> telnet -V
 ```
 Same idea — guess username & password for Telnet.
 
+![alt text](image-17.png)
+
 ---
 
 ### 6.3 🔒 SSH Brute Force (with NetExec)
@@ -128,6 +137,8 @@ Same idea — guess username & password for Telnet.
 nxc ssh <TARGET_IP> -u userlist.txt -p passlist.txt
 ```
 Check if any usernames & passwords work for SSH.
+
+![alt text](image-18.png)
 
 ---
 
@@ -144,6 +155,8 @@ Check if any usernames & passwords work for SSH.
 9. Start Attack  
 10. Look for different responses = password found!
 
+![alt text](image-19.png)![alt text](image-20.png)![alt text](image-21.png)![alt text](image-22.png)![alt text](image-23.png)
+
 ---
 
 ## 🐍 7. Sniffing (See What’s Inside The Data)
@@ -156,14 +169,23 @@ Use **Wireshark** to capture what’s being sent when you login.
 3. Start capture  
 
 ### Try logging in to:
-- **FTP** → `ftp <TARGET_IP>`  
-- **Telnet** → `telnet <TARGET_IP>`  
+- **FTP** → `ftp <TARGET_IP>` 
+![alt text](image-25.png)
+- **Telnet** → `telnet <TARGET_IP>` 
+![alt text](image-29.png)
 - **SSH** → `ssh <username>@<TARGET_IP>`  
+![alt text](image-36.png)
 
 **Wireshark Filter**:
 - `tcp.port == 21` (for FTP)
+![alt text](image-26.png)
+![alt text](image-27.png) 
 - `tcp.port == 23` (for Telnet)
+![alt text](image-30.png)
+![alt text](image-32.png) 
 - `tcp.port == 22` (for SSH)
+![alt text](image-36.png)
+![alt text](image-37.png)
 
 ✅ *See if username and password appear in clear text (FTP and Telnet usually do). SSH is encrypted (cannot read).*
 
