@@ -155,7 +155,7 @@ Check if any usernames & passwords work for SSH.
 9. Start Attack  
 10. Look for different responses = password found!
 
-![alt text](image-19.png)![alt text](image-20.png)![alt text](image-21.png)![alt text](image-22.png)![alt text](image-23.png)![alt text](image-24.png)![alt text](image-25.png)
+![alt text](image-19.png)![alt text](image-20.png)![alt text](image-21.png)![alt text](image-22.png)![alt text](image-23.png)![alt text](image-34.png)![alt text](image-35.png)
 
 ---
 
