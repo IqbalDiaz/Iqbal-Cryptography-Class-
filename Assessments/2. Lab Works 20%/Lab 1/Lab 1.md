@@ -172,26 +172,29 @@ Use **Wireshark** to capture what’s being sent when you login.
 
 ### Try logging in to:
 - **FTP** → `ftp <TARGET_IP>` 
+
 ![alt text](img/image-25.png)
 
 - **Telnet** → `telnet <TARGET_IP>` 
+
 ![alt text](img/image-29.png)
 
 - **SSH** → `ssh <username>@<TARGET_IP>`  
+
 ![alt text](img/image-36.png)
 
 **Wireshark Filter**:
 - `tcp.port == 21` (for FTP)
-![alt text](img/image-26.png)
-![alt text](img/image-27.png) 
+
+![alt text](img/image-26.png)![alt text](img/image-27.png) 
 
 - `tcp.port == 23` (for Telnet)
-![alt text](img/image-30.png)
-![alt text](img/image-32.png) 
+
+![alt text](img/image-30.png)![alt text](img/image-32.png) 
 
 - `tcp.port == 22` (for SSH)
-![alt text](img/image-36.png)
-![alt text](img/image-37.png)
+
+![alt text](img/image-36.png)![alt text](img/image-37.png)
 
 ✅ *See if username and password appear in clear text (FTP and Telnet usually do). SSH is encrypted (cannot read).*
 
