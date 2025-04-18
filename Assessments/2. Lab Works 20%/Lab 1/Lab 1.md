@@ -1,4 +1,4 @@
-![alt text](banner (1).png)
+![alt text](banner.png)
 ---
 # 📖 **Super Simple Network Protocol Security Lab Guide**
 
