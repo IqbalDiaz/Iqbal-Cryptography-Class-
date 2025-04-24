@@ -21,8 +21,6 @@
 **Goal:**  
 ➡️ Find out what database is on the victim machine and try to connect to it from Kali.
 
----
-
 ### 🔍 1.1 Check for Open Ports
 
 ```bash

@@ -1,40 +1,36 @@
 Here’s a **summary of what this lab does**:
 
-### 🧪 **Goal**:  
-Simulate how a hacker attacks a weak system to learn about **network security**.
+---
 
-### 💻 **Setup**:  
-- Use **Kali Linux** (attacker)  
-- Use **Metasploitable 2** (target)  
-- Connect both in the same network
+### 🔐 **Lab 1 Summary: Cryptographic Attacks – Brute Force & Traffic Analysis**
 
-### 🔍 **What You’ll Do**:
+**Objective:**  
+Explore the weaknesses in common network protocols (FTP, TELNET, SSH, HTTP) by:
+- Performing brute force attacks to recover passwords.
+- Using captured credentials to analyze network traffic.
+- Evaluating the security of each protocol and recommending fixes.
 
-1. **Scan for open ports** (with `nmap`)  
-   → See which services are running: FTP, SSH, Telnet, HTTP
+---
 
-2. **Find usernames** (with `enum4linux`)  
-   → Get a list of accounts on the target
+### 🛠️ **Tasks Overview:**
 
-3. **Discover hidden web pages** (with `gobuster`)  
-   → Look for `/login`, `/admin`, etc.
+1. **User Enumeration**  
+   - Identify usernames on the vulnerable virtual machine for use in brute force attacks.
 
-4. **Brute force passwords**  
-   → Use tools like `hydra`, `medusa`, and **Burp Suite**  
-   → Try different username/password combos for FTP, Telnet, SSH, and websites
+2. **Brute Force Attacks**  
+   - Use tools like Hydra, Medusa, or NetExec for attacking FTP, TELNET, and SSH.
+   - Use Burp Suite’s Intruder for brute force on HTTP login pages.
 
-5. **Sniff data with Wireshark**  
-   → See if credentials are sent in plain text  
-   → Check how secure each protocol is
+3. **Traffic Sniffing**  
+   - Use recovered credentials to log in and capture traffic with Wireshark or tcpdump.
+   - Analyze which protocols are secure (encrypted) or insecure (plaintext).
 
-6. **Make a results table**  
-   → Show which protocols leak info and which protect it
+4. **Problem Analysis**  
+   - Document any issues (e.g., rate limiting) faced during attacks and how they were handled.
 
-### 🔒 **Security Lessons**:
-
-- **FTP & Telnet** are insecure — send data in plain text  
-- **SSH** is encrypted — more secure  
-- Use strong passwords and secure alternatives (e.g., HTTPS, SFTP, SSH with keys)
+5. **Mitigation Proposals**  
+   - Suggest secure alternatives (e.g., using SSH instead of TELNET).
+   - Explain how these alternatives improve security.
 
 ---
 
