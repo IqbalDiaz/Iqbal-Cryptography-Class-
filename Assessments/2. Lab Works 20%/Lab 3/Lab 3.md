@@ -1,160 +1,228 @@
-Absolutely! Here’s a **step-by-step guide** for each task in Lab 3 using OpenSSL. This will cover all the commands you need, plus notes on what to screenshot or analyze.
+# 🧠 **Lab 3: Hands-On with OpenSSL — Kid-Friendly Full Guide**
+
+## **🛠 Task 1: Encrypt and Decrypt a File (Symmetric Encryption with AES)**
+
+### 📦 Tools:
+- **OpenSSL** commands: `openssl enc`, `openssl rand`
+
+### 🚀 What we're doing:
+- **Lock (encrypt)** a file with a **secret key**.
+- **Unlock (decrypt)** it later using the same secret key.
+
+### 📝 Step-by-step:
+
+1. **Make a strong random key** (like a really good password):
+```bash
+openssl rand -hex 32 > key.txt
+```
+> 📄 A new file `key.txt` will be created. It contains a secret key!
+
+2. **Make a simple message file**:
+```bash
+echo "This is a secret message from <Your Name>" > yourname.txt
+```
+> 📄 A file called `yourname.txt` will be made with your message inside.
+
+3. **Lock the message using your secret key (encrypt it)**:
+```bash
+openssl enc -aes-256-cbc -salt -in yourname.txt -out yourname.txt.enc -pass file:./key.txt
+```
+> 🔒 Your message is now protected! It’s saved as `yourname.txt.enc`.
+
+4. **Unlock the message (decrypt it)**:
+```bash
+openssl enc -d -aes-256-cbc -in yourname.txt.enc -out yourname_decrypted.txt -pass file:./key.txt
+```
+> 🔓 Now you can read the original message again in `yourname_decrypted.txt`!
+
+5. **Check and compare the files**:
+```bash
+cat yourname.txt
+cat yourname_decrypted.txt
+```
+> ✅ The original and the decrypted file should show the **same** message!
+
+### 📸 Screenshots you must take:
+- Creating the key
+- Encrypting the file
+- Decrypting the file
+- Showing both files with `cat`
 
 ---
 
-## 🔐 **Lab 3: OpenSSL Hands-On Guide**
+## **🛠 Task 2: Encrypt and Decrypt using Public and Private Keys (Asymmetric Encryption with RSA)**
 
----
+### 📦 Tools:
+- **OpenSSL** commands: `openssl genpkey`, `openssl rsa`, `openssl rsautl`
 
-### **Task 1: Symmetric Encryption using AES-256-CBC (3 marks)**
+### 🚀 What we're doing:
+- Create a pair of keys (🔑🔑: public and private).
+- Lock the file with the **public key**.
+- Unlock it with the **private key**.
 
-#### 🛠 Steps:
-1. **Create a sample file:**
+### 📝 Step-by-step:
+
+1. **Make a private key (only you have it)**:
 ```bash
-echo "Mesej rahsia guna AES encryption oleh <Nama Anda>" > rahsia.txt
+openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
 ```
+> 🔑 You now have `private.pem`!
 
-2. **Encrypt the file using AES-256-CBC:**
+2. **Make a public key (can be shared with others)**:
 ```bash
-openssl enc -aes-256-cbc -salt -in rahsia.txt -out rahsia.txt.enc
+openssl rsa -pubout -in private.pem -out public.pem
 ```
-> You will be prompted to set a password.
+> 📢 This gives you `public.pem`.
 
-3. **Decrypt the file:**
+3. **Create a message**:
 ```bash
-openssl enc -aes-256-cbc -d -in rahsia.txt.enc -out rahsia_decrypted.txt
+echo "Secret message from Labu to Labi." > rahsia.txt
 ```
+> ✉️ Message saved in `rahsia.txt`.
 
-4. **Verify original vs decrypted:**
+4. **Lock (encrypt) the message using the public key**:
+```bash
+openssl rsautl -encrypt -inkey public.pem -pubin -in rahsia.txt -out rahsia.enc
+```
+> 🔒 Now it’s locked and saved as `rahsia.enc`.
+
+5. **Unlock (decrypt) the message using the private key**:
+```bash
+openssl rsautl -decrypt -inkey private.pem -in rahsia.enc -out rahsia_decrypted.txt
+```
+> 🔓 Message is now back to normal inside `rahsia_decrypted.txt`.
+
+6. **Compare the files**:
 ```bash
 cat rahsia.txt
 cat rahsia_decrypted.txt
 ```
+> ✅ The original and decrypted messages must be the same.
 
-#### 📸 Screenshot:
-- Encryption and decryption commands
-- `cat` outputs for both files
-
----
-
-### **Task 2: Asymmetric Encryption using RSA (3 marks)**
-
-#### 🛠 Steps:
-1. **Generate RSA private key (2048-bit):**
-```bash
-openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
-```
-
-2. **Extract public key:**
-```bash
-openssl rsa -pubout -in private.pem -out public.pem
-```
-
-3. **Create a message file:**
-```bash
-echo "Ini mesej untuk RSA encryption." > message.txt
-```
-
-4. **Encrypt the message with public key:**
-```bash
-openssl rsautl -encrypt -inkey public.pem -pubin -in message.txt -out message.enc
-```
-
-5. **Decrypt with private key:**
-```bash
-openssl rsautl -decrypt -inkey private.pem -in message.enc -out message_decrypted.txt
-```
-
-6. **Verify decrypted content:**
-```bash
-cat message.txt
-cat message_decrypted.txt
-```
-
-#### 📸 Screenshot:
-- Key generation and encryption/decryption commands
-- Content comparison via `cat`
+### 📸 Screenshots you must take:
+- Private and public key creation
+- Encryption
+- Decryption
+- `cat` the files to show messages
 
 ---
 
-### **Task 3: Hashing and Message Integrity using SHA-256 (3 marks)**
+## **🛠 Task 3: Check if a File is Changed (Hashing with SHA-256)**
 
-#### 🛠 Steps:
-1. **Create file:**
+### 📦 Tools:
+- OpenSSL (`openssl dgst`)
+- OR simple Linux tool: `sha256sum`
+
+### 🚀 What we're doing:
+- Create a **fingerprint** (hash) of a file.
+- See if it changes if someone tampers with the file.
+
+### 📝 Step-by-step:
+
+1. **Make a file**:
 ```bash
-echo "Nama & ID Pelajar" > data.txt
+echo "Name: <Your Name>, ID: <Your ID>" > integrity.txt
 ```
+> 📄 File created!
 
-2. **Generate SHA-256 hash:**
+2. **Make a SHA-256 fingerprint**:
 ```bash
-openssl dgst -sha256 data.txt
+openssl dgst -sha256 integrity.txt
 ```
-
-3. **Modify file:**
+OR
 ```bash
-echo "Modified!" >> data.txt
+sha256sum integrity.txt
 ```
+> 🔍 This fingerprint (hash) represents the file.
 
-4. **Generate hash again:**
+3. **Change (tamper) the file**:
 ```bash
-openssl dgst -sha256 data.txt
+echo "Modified slightly." >> integrity.txt
 ```
+> 🛠 We just changed the file.
 
-#### 📸 Screenshot:
-- Hash before and after file change
+4. **Check the fingerprint again**:
+```bash
+openssl dgst -sha256 integrity.txt
+```
+> 😲 The fingerprint will **change** even for small edits!
 
-#### 🧠 Explain:
-> Hashes change because even a 1-bit difference in input changes the hash entirely. This ensures data integrity.
+### 📸 Screenshots you must take:
+- Hash of the original file
+- Hash after tampering
+
+### 🧠 Why? (Simple explanation):
+- **If the file is edited even a little, the hash changes completely.**  
+- This is how computers check if something has been secretly changed.
 
 ---
 
-### **Task 4: Digital Signatures using RSA & SHA-256 (5 marks)**
+## **🛠 Task 4: Sign and Verify a File (Digital Signatures with RSA)**
 
-#### 🛠 Steps:
-1. **Create a new file:**
+### 📦 Tools:
+- OpenSSL (`openssl dgst`, `openssl pkeyutl`)
+
+### 🚀 What we're doing:
+- Sign a file using your private key 🔏.
+- Check if the file is **real and unchanged** using the public key.
+
+### 📝 Step-by-step:
+
+1. **Use your private key (`private.pem`)**.
+
+2. **Make a file to sign**:
 ```bash
-echo "Ini fail yang akan ditandatangani." > signed_file.txt
+echo "This is the signed agreement." > agreement.txt
 ```
+> ✍️ File ready!
 
-2. **Sign the file (SHA-256 digest):**
+3. **Sign the file**:
 ```bash
-openssl dgst -sha256 -sign private.pem -out signed_file.sig signed_file.txt
+openssl dgst -sha256 -sign private.pem -out agreement.sig agreement.txt
 ```
+> 🖊 This produces a `agreement.sig` signature!
 
-3. **Verify the signature:**
+4. **Verify the signature**:
 ```bash
-openssl dgst -sha256 -verify public.pem -signature signed_file.sig signed_file.txt
+openssl dgst -sha256 -verify public.pem -signature agreement.sig agreement.txt
 ```
+> ✅ If everything is good, you will see: `Verified OK`.
 
-4. **Modify the file and try verification again:**
+5. **Tamper with the file**:
 ```bash
-echo "Tampered!" >> signed_file.txt
-openssl dgst -sha256 -verify public.pem -signature signed_file.sig signed_file.txt
+echo "Tampered!" >> agreement.txt
 ```
+> 🛠 Change the file.
 
-#### 📸 Screenshot:
-- Signing and both verification attempts
+6. **Try to verify again**:
+```bash
+openssl dgst -sha256 -verify public.pem -signature agreement.sig agreement.txt
+```
+> ❌ Now it will fail because the file was changed!
 
-#### 🧠 Explain:
-> Verification fails after tampering because the file hash no longer matches the signed hash.
+### 📸 Screenshots you must take:
+- Signing the file
+- Successful verification
+- Failed verification after tampering
+
+### 🧠 Why? (Simple explanation):
+- **Signatures prove that the file is from you and has NOT been changed.**
 
 ---
 
-## ✅ Final Deliverables Summary:
+## 🛠 Troubleshooting (Simple fixes)
 
-- **Walkthrough Document (Markdown)** with:
-  - Commands used
-  - Screenshots
-  - Observations & explanations
+✅ If you see an error:
 
-- **GitHub Repository**:
-  - Include `.txt`, `.enc`, `.pem`, `.sig` files
-  - Add README.md with brief descriptions
-
-- **Demo**:
-  - Live run or show screenshots
-  - Discuss real-world relevance (TLS, file security, software signing)
+| Error message | Meaning | How to fix |
+| :--- | :--- | :--- |
+| `bad decrypt` | Wrong password or key used | Double-check your key! |
+| `Verification Failure` | File changed after signing | Make sure the file wasn't touched. |
+| `No such file or directory` | You typed wrong filename | Check spelling carefully. |
 
 ---
 
-Let me know if you’d like me to generate the Markdown walkthrough file or README for GitHub as well!
+## 📚 Helpful Resources:
+- [OpenSSL Official Docs](https://www.openssl.org/docs/)
+- `man openssl` command inside terminal
+- Ask Google or StackOverflow for help!
