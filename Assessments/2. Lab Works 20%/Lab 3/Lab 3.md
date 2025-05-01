@@ -25,7 +25,7 @@ echo "This is a secret message from <Your Name>" > yourname.txt
 
 3. **Lock the message using your secret key (encrypt it)**:
 ```bash
-openssl enc -aes-256-cbc -salt -in yourname.txt -out yourname.txt.enc -pass file:./key.txt
+openssl enc -aes-256-cbc -salt -pbkdf2 -in yourname.txt -out yourname.txt.enc -pass file:./key.txt
 ```
 > 🔒 Your message is now protected! It’s saved as `yourname.txt.enc`.
 
@@ -41,6 +41,47 @@ cat yourname.txt
 cat yourname_decrypted.txt
 ```
 > ✅ The original and the decrypted file should show the **same** message!
+
+**result screenshot:**
+```sh
+# Creating the key
+┌──(iqbal㉿nws23010013)-[~]
+└─$ openssl rand -hex 32 > key.txt                                                                                                                    
+┌──(iqbal㉿nws23010013)-[~]
+└─$ echo "This is a secret message from IDZ" > yourname.txt                                                                                                          
+┌──(iqbal㉿nws23010013)-[~]
+└─$ cat yourname.txt      
+This is a secret message from IDZ
+```
+![alt text](image.png)
+```sh
+# Encrypting the file & Decrypting the file
+┌──(iqbal㉿nws23010013)-[~]
+└─$ openssl enc -aes-256-cbc -salt -pbkdf2 -in yourname.txt -out yourname.txt.enc -pass file:./key.txt                                                                                                                   
+┌──(iqbal㉿nws23010013)-[~]
+└─$ openssl enc -d -aes-256-cbc -pbkdf2 -in yourname.txt.enc -out yourname_decrypted.txt -pass file:./key.txt
+```
+![alt text](image-1.png)
+
+```sh
+# Showing both files with `cat`
+┌──(iqbal㉿nws23010013)-[~]
+└─$ cat yourname.txt                                                                                  
+This is a secret message from IDZ
+┌──(iqbal㉿nws23010013)-[~]
+└─$ cat yourname_decrypted.txt                                                                        
+This is a secret message from IDZ
+```
+![alt text](image-2.png)
+
+```sh
+# yourname.txt.enc
+┌──(iqbal㉿nws23010013)-[~]
+└─$ cat yourname.txt.enc      
+Salted__4j
+          vE▒��]4X�԰��K/Ij��[����&��JK�����g��"��_��    
+```
+![alt text](image-3.png)
 
 ### 📸 Screenshots you must take:
 - Creating the key
@@ -82,13 +123,13 @@ echo "Secret message from Labu to Labi." > rahsia.txt
 
 4. **Lock (encrypt) the message using the public key**:
 ```bash
-openssl rsautl -encrypt -inkey public.pem -pubin -in rahsia.txt -out rahsia.enc
+openssl pkeyutl -encrypt -pubin -inkey public.pem -in rahsia.txt -out rahsia.enc
 ```
 > 🔒 Now it’s locked and saved as `rahsia.enc`.
 
 5. **Unlock (decrypt) the message using the private key**:
 ```bash
-openssl rsautl -decrypt -inkey private.pem -in rahsia.enc -out rahsia_decrypted.txt
+openssl pkeyutl -decrypt -inkey private.pem -in rahsia.enc -out rahsia_decrypted.txt
 ```
 > 🔓 Message is now back to normal inside `rahsia_decrypted.txt`.
 
@@ -98,6 +139,39 @@ cat rahsia.txt
 cat rahsia_decrypted.txt
 ```
 > ✅ The original and decrypted messages must be the same.
+
+**result screenshot:**
+```sh
+# Private and public key creation
+┌──(iqbal㉿nws23010013)-[~]
+└─$ openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
+.....+........+......+.......+...+............+..+...+++++++++++++++++++++++++++++++++++++++*...........+....+............+............+.....+.......+++++++++++++++++++++++++++++++++++++++*..+..........+.................+.......+...+......+......+.....+.+..++++++
+.....+............+...+..+++++++++++++++++++++++++++++++++++++++*.+.+++++++++++++++++++++++++++++++++++++++*...+.+..+...+....+......+..+......+.+...+..+.............+......+......++++++
+┌──(iqbal㉿nws23010013)-[~]
+└─$ openssl rsa -pubout -in private.pem -out public.pem
+writing RSA key
+```
+![alt text](image-4.png)
+
+```sh
+# Encryption & Decryption
+┌──(iqbal㉿nws23010013)-[~]
+└─$ openssl pkeyutl -encrypt -pubin -inkey public.pem -in rahsia.txt -out rahsia.enc
+┌──(iqbal㉿nws23010013)-[~]
+└─$ openssl pkeyutl -decrypt -inkey private.pem -in rahsia.enc -out rahsia_decrypted.txt
+```
+![alt text](image-5.png)
+
+```sh
+# `cat` the files to show messages
+┌──(iqbal㉿nws23010013)-[~]
+└─$ cat rahsia.txt
+Secret message from IDZ to ZYMM.
+┌──(iqbal㉿nws23010013)-[~]
+└─$ cat rahsia_decrypted.txt
+Secret message from IDZ to ZYMM.
+```
+![alt text](image-6.png)
 
 ### 📸 Screenshots you must take:
 - Private and public key creation
@@ -146,6 +220,23 @@ echo "Modified slightly." >> integrity.txt
 openssl dgst -sha256 integrity.txt
 ```
 > 😲 The fingerprint will **change** even for small edits!
+
+**result screenshot:**
+```sh
+# Hash of the original file
+┌──(iqbal㉿nws23010013)-[~]
+└─$ openssl dgst -sha256 integrity.txt
+SHA2-256(integrity.txt)= 14806ef6a571a39b17e6bc29b53dfb2491d3c9dc58697e212d7ac6304cf64df8
+```
+![alt text](image-7.png)
+
+```sh
+# Hash after tampering
+┌──(iqbal㉿nws23010013)-[~]
+└─$ openssl dgst -sha256 integrity.txt
+SHA2-256(integrity.txt)= af2e5595fa5df03495ff2be3c67f009faffc9552e18be476ec974694aa446805
+```
+![alt text](image-8.png)
 
 ### 📸 Screenshots you must take:
 - Hash of the original file
@@ -199,6 +290,34 @@ echo "Tampered!" >> agreement.txt
 openssl dgst -sha256 -verify public.pem -signature agreement.sig agreement.txt
 ```
 > ❌ Now it will fail because the file was changed!
+
+**result screenshot:**
+```sh
+# Signing the file
+┌──(iqbal㉿nws23010013)-[~]
+└─$ echo "This is the signed agreement." > agreement.txt
+┌──(iqbal㉿nws23010013)-[~]
+└─$ openssl dgst -sha256 -sign private.pem -out agreement.sig agreement.txt
+```
+![alt text](image-9.png)
+
+```sh
+# Successful verification
+┌──(iqbal㉿nws23010013)-[~]
+└─$ openssl dgst -sha256 -verify public.pem -signature agreement.sig agreement.txt
+Verified OK
+```
+![alt text](image-10.png)
+
+```sh
+# Failed verification after tampering
+┌──(iqbal㉿nws23010013)-[~]
+└─$ openssl dgst -sha256 -verify public.pem -signature agreement.sig agreement.txt
+Verification failure
+4097BF5F557F0000:error:02000068:rsa routines:ossl_rsa_verify:bad signature:../crypto/rsa/rsa_sign.c:442:
+4097BF5F557F0000:error:1C880004:Provider routines:rsa_verify_directly:RSA lib:../providers/implementations/signature/rsa_sig.c:1041:
+```
+![alt text](image-11.png)
 
 ### 📸 Screenshots you must take:
 - Signing the file
