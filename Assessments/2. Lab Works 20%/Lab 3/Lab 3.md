@@ -1,3 +1,5 @@
+![alt text](img/banner.png)
+
 # 🧠 **Lab 3: Hands-On with OpenSSL — Kid-Friendly Full Guide**
 
 ## **🛠 Task 1: Encrypt and Decrypt a File (Symmetric Encryption with AES)**
@@ -53,7 +55,7 @@ cat yourname_decrypted.txt
 └─$ cat yourname.txt      
 This is a secret message from IDZ
 ```
-![alt text](image.png)
+![alt text](img/image.png)
 ```sh
 # Encrypting the file & Decrypting the file
 ┌──(iqbal㉿nws23010013)-[~]
@@ -61,7 +63,7 @@ This is a secret message from IDZ
 ┌──(iqbal㉿nws23010013)-[~]
 └─$ openssl enc -d -aes-256-cbc -pbkdf2 -in yourname.txt.enc -out yourname_decrypted.txt -pass file:./key.txt
 ```
-![alt text](image-1.png)
+![alt text](img/image-1.png)
 
 ```sh
 # Showing both files with `cat`
@@ -72,7 +74,7 @@ This is a secret message from IDZ
 └─$ cat yourname_decrypted.txt                                                                        
 This is a secret message from IDZ
 ```
-![alt text](image-2.png)
+![alt text](img/image-2.png)
 
 ```sh
 # yourname.txt.enc
@@ -81,7 +83,7 @@ This is a secret message from IDZ
 Salted__4j
           vE▒��]4X�԰��K/Ij��[����&��JK�����g��"��_��    
 ```
-![alt text](image-3.png)
+![alt text](img/image-3.png)
 
 ### 📸 Screenshots you must take:
 - Creating the key
@@ -151,7 +153,7 @@ cat rahsia_decrypted.txt
 └─$ openssl rsa -pubout -in private.pem -out public.pem
 writing RSA key
 ```
-![alt text](image-4.png)
+![alt text](img/image-4.png)
 
 ```sh
 # Encryption & Decryption
@@ -160,7 +162,7 @@ writing RSA key
 ┌──(iqbal㉿nws23010013)-[~]
 └─$ openssl pkeyutl -decrypt -inkey private.pem -in rahsia.enc -out rahsia_decrypted.txt
 ```
-![alt text](image-5.png)
+![alt text](img/image-5.png)
 
 ```sh
 # `cat` the files to show messages
@@ -171,7 +173,7 @@ Secret message from IDZ to ZYMM.
 └─$ cat rahsia_decrypted.txt
 Secret message from IDZ to ZYMM.
 ```
-![alt text](image-6.png)
+![alt text](img/image-6.png)
 
 ### 📸 Screenshots you must take:
 - Private and public key creation
@@ -228,7 +230,7 @@ openssl dgst -sha256 integrity.txt
 └─$ openssl dgst -sha256 integrity.txt
 SHA2-256(integrity.txt)= 14806ef6a571a39b17e6bc29b53dfb2491d3c9dc58697e212d7ac6304cf64df8
 ```
-![alt text](image-7.png)
+![alt text](img/image-7.png)
 
 ```sh
 # Hash after tampering
@@ -236,7 +238,7 @@ SHA2-256(integrity.txt)= 14806ef6a571a39b17e6bc29b53dfb2491d3c9dc58697e212d7ac63
 └─$ openssl dgst -sha256 integrity.txt
 SHA2-256(integrity.txt)= af2e5595fa5df03495ff2be3c67f009faffc9552e18be476ec974694aa446805
 ```
-![alt text](image-8.png)
+![alt text](img/image-8.png)
 
 ### 📸 Screenshots you must take:
 - Hash of the original file
@@ -299,7 +301,7 @@ openssl dgst -sha256 -verify public.pem -signature agreement.sig agreement.txt
 ┌──(iqbal㉿nws23010013)-[~]
 └─$ openssl dgst -sha256 -sign private.pem -out agreement.sig agreement.txt
 ```
-![alt text](image-9.png)
+![alt text](img/image-9.png)
 
 ```sh
 # Successful verification
@@ -307,7 +309,7 @@ openssl dgst -sha256 -verify public.pem -signature agreement.sig agreement.txt
 └─$ openssl dgst -sha256 -verify public.pem -signature agreement.sig agreement.txt
 Verified OK
 ```
-![alt text](image-10.png)
+![alt text](img/image-10.png)
 
 ```sh
 # Failed verification after tampering
@@ -317,7 +319,7 @@ Verification failure
 4097BF5F557F0000:error:02000068:rsa routines:ossl_rsa_verify:bad signature:../crypto/rsa/rsa_sign.c:442:
 4097BF5F557F0000:error:1C880004:Provider routines:rsa_verify_directly:RSA lib:../providers/implementations/signature/rsa_sig.c:1041:
 ```
-![alt text](image-11.png)
+![alt text](img/image-11.png)
 
 ### 📸 Screenshots you must take:
 - Signing the file
