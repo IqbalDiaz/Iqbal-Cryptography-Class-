@@ -4,7 +4,13 @@ import base64
 
 # AES needs key length of 16, 24, or 32 bytes (128, 192, 256 bits)
 key = get_random_bytes(16)  # AES-128
-message = "Cryptography Lab by Iqbal Bin Erman, NWS22102310!"
+
+# Choose between default or custom message
+choice = input("Use default message? (y/n): ").lower()
+if choice == 'y':
+    message = "Cryptography Lab by Iqbal Bin Erman, NWS22102310!"
+else:
+    message = input("Enter your message to encrypt: ")
 
 # Padding function (AES block = 16 bytes)
 def pad(text):
@@ -25,5 +31,7 @@ decipher = AES.new(key, AES.MODE_ECB)
 decrypted = unpad(decipher.decrypt(decoded_cipher).decode())
 
 # Results
+print("\nOriginal message:", message)
+print("Encryption key:", key.hex())
 print("Encrypted (base64):", encoded_cipher)
 print("Decrypted:", decrypted)
