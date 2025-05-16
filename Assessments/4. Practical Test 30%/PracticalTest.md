@@ -61,6 +61,7 @@ Objective: Set up SSH key-based login to a simulated server (or localhost if iso
 ![alt text](evidence/image-4.png)
 - Screenshot of `ssh user@ssh-server "echo NWS23010013 > Iqbal_Erman.txt"` from your local computer
 ![alt text](evidence/image-6.png)
+![alt text](evidence/image-13.png)
 - Screenshot of `whoami` from remote shell.
 ![alt text](evidence/image-5.png)
 
@@ -87,6 +88,6 @@ Expected Output:
 (Assalamualaikum Semua)
 ![alt text](evidence/image-11.png)
 
-- 2bc92f33a2ede5ada3d65b468a81f617d0229d843d87c63313833e509e5a6782 → SHA-256
-(Bismillah)
+- e583cee9ab9d7626c970fd6e9938fcb2d06fbbd12f1c1a3c6902a215808c825c → SHA-256
+(Begitulah Lumrah Kehidupan)
 ![alt text](evidence/image-12.png)
