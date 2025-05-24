@@ -4,142 +4,151 @@
 **Author:** Iqbal bin Erman  
 **Course:** CBS 2373 Cryptography  
 **Test:** Practical Test 2 – Simulated Ransomware Decryption  
-**Date:** 24/05/25
+**Date:** 24/05/25 
+**File Analyzed:** `simulated_ransomware.exe`  
+**SHA-256:** `4BF1DA4E96EE6DD0306284C7F9CFE30F93113106843F2360052F8FEAF7B5578F`
 
+![alt text](evidence/image-3.png)
 ---
 
 ## 1. 📦 Binary Analysis
 
-### 1.1 Packaging and Language Detection
+### 1.1 File Extraction
 
-Using the `file` command and **Detect It Easy (DIE)**, the ransomware binary was identified as a **Python-based executable packaged with PyInstaller**.
+- **Archive:** `simulated_ransomware.7z`  
+- **Password:** `semogaberjaya`  
+- **Tool Used:** `7-Zip`
 
 ```bash
-$ file suspicious_binary.exe
-Python 3.10 PyInstaller archive
+7z x simulated_ransomware.7z
 ````
+
+* Verified SHA-256 checksum:
+
+```bash
+sha256sum simulated_ransomware.exe
+```
+
+✅ Hash matched: `4BF1DA4E96EE6DD0306284C7F9CFE30F93113106843F2360052F8FEAF7B5578F`
+![alt text](evidence/image.png)
 
 ---
 
 ## 2. 🧬 Reverse Engineering
 
-### 2.1 Extraction and Decompilation
+### 2.1 Language & Packaging
 
-**Tool Used:** `pyinstxtractor.py`
-
-```bash
-python pyinstxtractor.py suspicious_binary.exe
-```
-
-Output: A folder named `suspicious_binary.exe_extracted` containing `.pyc` files.
-
-**Tool Used:** `uncompyle6`
+* **Tool Used:** `file`, `Detect It Easy (DIE)`
+* Detected: **PyInstaller (Python Executable)**
 
 ```bash
-uncompyle6 extracted_file.pyc -o .
+$ file simulated_ransomware.exe
+Python 3.x PyInstaller archive
+```
+![alt text](evidence/image-1.png)
+
+### 2.2 Extract Python Code
+
+* **Tool Used:** `pyinstxtractor.py`
+
+```bash
+.\pyinstxtractor-ng.exe simulated_ransomware.exe
 ```
 
-Recovered the source code in Python format.
+Output: `simulated_ransomware.exe_extracted/`
+![alt text](evidence/image-2.png)
+
+### 2.3 Decompile `.pyc` Files
+
+* **Tool Used:** `uncompyle6`
+
+```bash
+uncompyle6 simulated_ransomware.pyc -o .
+```
+
+Recovered: `simulated_ransomware.py`
+![alt text](evidence/image-4.png)
+![alt text](evidence/image-5.png)
 
 ---
 
 ## 3. 🔐 Cryptographic Analysis
 
-### 3.1 Algorithm and Mode Used
+### 3.1 Algorithm and Mode Detected
 
-From the recovered source code:
-
-```python
-from Crypto.Cipher import AES
-cipher = AES.new(key, AES.MODE_CBC, iv)
-```
+From the source code:
+![alt text](evidence/image-6.png)
 
 * **Algorithm:** AES
-* **Mode:** CBC (Cipher Block Chaining)
-* **Padding:** PKCS7
+* **Mode:** ECB
+* **Padding:** PKCS#7
+* **Key Length:** 	sha256("BukanRahsiaLagi")[:16] (128-bit)
 * **Block Size:** 128-bit
-* **Key Length:** 128-bit (16 bytes)
+* **IV:** Use AES with recovered key in ECB mode (no IV required)
 
 ### 3.2 Hardcoded Key and IV
 
-```python
-key = b'0123456789abcdef'
-iv = b'fedcba9876543210'
-```
+Recovered from code:
 
-Both **key and IV were hardcoded** directly in the source, making the encryption easily reversible.
+```python
+KEY_SUFFIX = "RahsiaLagi"
+KEY_STR = f"Bukan{KEY_SUFFIX}"   # -> "BukanRahsiaLagi"
+KEY = sha256(KEY_STR.encode()).digest()[:16]
+```
 
 ---
 
 ## 4. 🧨 Cryptographic Flaws
 
-### ❌ Identified Issues
-
-| Flaw                  | Description                                                  |
-| --------------------- | ------------------------------------------------------------ |
-| 🔑 Hardcoded Key      | Anyone can decrypt files without brute-force                 |
-| ♻️ IV Reuse           | Using the same IV for all files in CBC mode                  |
-| 🚫 No Integrity Check | No HMAC or AES-GCM, so tampered ciphertext won't be detected |
-| 🔓 No Key Derivation  | Secure derivation methods like PBKDF2 or Argon2 are not used |
+| ❌ Flaw            | 🔎 Explanation                                        |
+| ----------------- | ----------------------------------------------------- |
+| Hardcoded Key     | Key is not generated per victim or protected          |
+| ECB Mode | Deterministic and leaks plaintext patterns |
+| No HMAC           | Tampered ciphertext cannot be detected                |
+| No Key Derivation | Password or key is not processed via PBKDF2/Argon2    |
 
 ---
 
-## 5. 🔓 Key Recovery
+## 5. 🔓 Key Recovery Steps
 
-The key and IV were **directly hardcoded** in the Python source. No brute-force or advanced recovery needed.
-
-* **Key:** `0123456789abcdef`
-* **IV:** `fedcba9876543210`
+* Recovered the AES key and IV directly from decompiled source.
+* No brute-force or advanced cracking required.
 
 ---
 
-## 6. ✅ Decryption Implementation
+## 6. 🧪 Decryption Script Summary
 
-A decryption script (`decrypt.py`) was written using `pycryptodome`. It reads `.enc` files, decrypts using AES-CBC and the recovered key/IV, and outputs the original plaintext files.
+**File:** `decrypt.py`
 
-Tested on multiple encrypted files, all successfully decrypted and verified.
+* **Libraries Used:** `Crypto.Cipher`, `os`
+* **Approach:**
+  * Read encrypted `.enc` files
+  * Use AES with recovered key in ECB mode (no IV required)
+  * Remove PKCS#7 padding
+  * Save decrypted plaintext files
 
----
+Tested and verified on all encrypted files.
 
-## 7. 🛡️ Recommendations
-
-To make this ransomware cryptographically stronger:
-
-| Suggestion                       | Reason                                |
-| -------------------------------- | ------------------------------------- |
-| 🔒 Use AES-GCM or ChaCha20       | Provides authenticated encryption     |
-| 🔑 Derive Key using PBKDF2       | Prevents easy recovery of static keys |
-| 🎲 Generate IV randomly per file | Prevents pattern leakage in CBC mode  |
-| 🧾 Add HMAC or signature         | Verifies integrity and authenticity   |
-
----
-
-## 8. 📸 Screenshots
-
-Please see the `/screenshots/` folder for:
-
-* Extraction of PyInstaller archive
-* Decompiled code showing key/IV
-* Running `decrypt.py` successfully
-* Before and after of `.enc` files
+![alt text](evidence/image-10.png)
+![alt text](evidence/image-7.png)
+![alt text](evidence/image-8.png)
+![alt text](evidence/image-9.png)
 
 ---
 
-## 9. 📁 Directory Structure
+## 7. 🛡️ Secure Design Suggestions
 
-```plaintext
-ransomware-decryptor/
-├── decrypt.py
-├── analysis.md
-├── README.md
-├── encrypted/
-│   ├── file1.txt.enc
-├── decrypted/
-│   ├── file1.txt
-├── screenshots/
-│   ├── pyinstxtractor.png
-│   ├── key_recovery.png
-│   ├── decryption_success.png
-```
+| ✅ Fix                         | 💡 Reason                            |
+| ----------------------------- | ------------------------------------ |
+| Use AES-GCM                   | Provides authenticated encryption    |
+| Derive key with PBKDF2/Argon2 | Protects against key disclosure      |
+| Random IV per file            | Prevents ciphertext pattern analysis |
+| Add HMAC or MAC               | Ensures data integrity               |
+
+---
+
+## ✅ Conclusion
+
+This ransomware simulation demonstrates several insecure practices in cryptographic implementation. By analyzing and reversing the binary, the encryption key and IV were recovered, and a custom decryption tool was developed to successfully recover encrypted files.
 
 ---
